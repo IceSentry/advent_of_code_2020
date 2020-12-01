@@ -13,15 +13,15 @@ pub trait Solver {
     type Input;
     type Output: Display;
 
-    fn parse_input(&self, input: String) -> Result<Self::Input>;
+    fn parse_input(&self, input: &str) -> Result<Self::Input>;
 
-    fn solve_first(&self, input: &Self::Input) -> Self::Output;
-    fn solve_second(&self, input: &Self::Input) -> Self::Output;
+    fn solve_part1(&self, input: &Self::Input) -> Self::Output;
+    fn solve_part2(&self, input: &Self::Input) -> Self::Output;
 
-    fn solve(&self, input: String) {
+    fn solve(&self, input: &str) {
         let input = self.parse_input(input).expect("failed to parse input");
-        let first_result = self.solve_first(&input);
-        let secondd_result = self.solve_second(&input);
+        let first_result = self.solve_part1(&input);
+        let secondd_result = self.solve_part2(&input);
         println!("{}", first_result);
         println!("{}", secondd_result);
     }

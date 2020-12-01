@@ -17,11 +17,12 @@ struct Opts {
 fn main() {
     let opts: Opts = Opts::parse();
 
-    let filename = format!("inputs/{:02}.txt", opts.day);
-    let input = fs::read_to_string(filename).expect("Something went wrong reading the file");
+    let filename = &format!("inputs/{:02}.txt", opts.day);
+    let input =
+        fs::read_to_string(filename).expect(&format!("Something went wrong reading {}", filename));
 
     match opts.day {
-        1 => solutions::day01::Day01 {}.solve(input),
+        1 => solutions::day01::Day01 {}.solve(&input),
         day => println!("day {} not solved yet", day),
     }
 }
