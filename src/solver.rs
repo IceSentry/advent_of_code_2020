@@ -22,7 +22,7 @@ pub trait Solver {
         let input = self.parse_input(input).expect("failed to parse input");
         let first_result = self.solve_part1(&input);
         let secondd_result = self.solve_part2(&input);
-        println!("{}", first_result);
-        println!("{}", secondd_result);
+        println!("part1: {}", first_result);
+        println!("part2: {}", secondd_result);
     }
 }
