@@ -13,3 +13,5 @@ itertools = "0.9.0"
 num-traits = "0.2.14"
 dotenv = "0.15.0"
 ureq = { version = "1.5.2", features = ["charset"] }
+indoc = "1.0.3"
+regex = "1.4.2"
