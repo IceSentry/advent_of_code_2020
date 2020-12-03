@@ -26,8 +26,8 @@ impl Solver for Day01 {
         sums.iter().product::<i32>()
     }
 
-    fn solve_part2(&self, input: &Self::Input) -> Self::Output {
+    fn solve_part2(&self, input: &Self::Input) -> Option<Self::Output> {
         let sums = find_sum(input.clone(), 3 as usize);
-        sums.iter().product::<i32>()
+        Some(sums.iter().product::<i32>())
     }
 }

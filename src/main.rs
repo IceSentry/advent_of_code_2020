@@ -54,6 +54,7 @@ fn main() -> Result<()> {
     match opts.day {
         1 => solutions::day01::Day01 {}.solve(&input),
         2 => solutions::day02::Day02 {}.solve(&input),
+        3 => solutions::day03::Day03 {}.solve(&input),
         day => println!("day {} not solved yet", day),
     };
 

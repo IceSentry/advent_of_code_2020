@@ -14,7 +14,7 @@ pub struct PasswordPolicy {
 pub struct Day02 {}
 
 impl Solver for Day02 {
-    type Input = Vec<(PasswordPolicy, String)>;
+    type Input = Vec<(i32, i32, char, String)>;
     type Output = usize;
 
     fn parse_input(&self, input: &str) -> Result<Self::Input> {
@@ -25,12 +25,10 @@ impl Solver for Day02 {
                 let captures = re.captures(l).with_context(|| "failed to match")?;
 
                 Ok((
-                    PasswordPolicy {
-                        lowest: captures[1].parse()?,
-                        highest: captures[2].parse()?,
-                        letter: captures[3].parse()?,
-                    },
-                    captures[4].parse::<String>()?,
+                    captures[1].parse()?,
+                    captures[2].parse()?,
+                    captures[3].parse()?,
+                    captures[4].parse()?,
                 ))
             })
             .collect()
@@ -39,27 +37,28 @@ impl Solver for Day02 {
     fn solve_part1(&self, input: &Self::Input) -> Self::Output {
         input
             .iter()
-            .filter(|(policy, password)| {
-                let count = password.matches(policy.letter).count() as i32;
-                count >= policy.lowest && count <= policy.highest
+            .filter(|(lowest, highest, letter, password)| {
+                let count = password.matches(*letter).count() as i32;
+                count >= *lowest && count <= *highest
             })
             .count()
     }
 
-    fn solve_part2(&self, input: &Self::Input) -> Self::Output {
-        input
-            .iter()
-            .filter(|(policy, password)| {
-                let mut chars = password.chars();
-                match (
-                    chars.nth(policy.lowest as usize - 1),
-                    chars.nth(policy.highest as usize - policy.lowest as usize - 1),
-                ) {
-                    (Some(a), Some(b)) => a != b && (a == policy.letter || b == policy.letter),
-                    _ => false,
-                }
-            })
-            .count()
+    fn solve_part2(&self, input: &Self::Input) -> Option<Self::Output> {
+        Some(
+            input
+                .iter()
+                .filter(|(lowest, highest, letter, password)| {
+                    match (
+                        password.chars().nth(*lowest as usize - 1),
+                        password.chars().nth(*highest as usize - 1),
+                    ) {
+                        (Some(a), Some(b)) => (a == *letter) != (b == *letter),
+                        _ => false,
+                    }
+                })
+                .count(),
+        )
     }
 }
 
@@ -93,7 +92,6 @@ mod tests {
 
         let input = Day02 {}.parse_input(inputs);
         let result = Day02 {}.solve_part2(&input.unwrap());
-        println!("result: {}", result);
-        assert!(result == 1);
+        assert!(result.unwrap() == 1);
     }
 }
