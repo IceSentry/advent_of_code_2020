@@ -4,13 +4,57 @@ use regex::Regex;
 use serde_scan::scan;
 use std::collections::HashMap;
 
+fn contains_keys(passport: &HashMap<String, String>) -> bool {
+    passport.contains_key("byr")
+        && passport.contains_key("iyr")
+        && passport.contains_key("eyr")
+        && passport.contains_key("hgt")
+        && passport.contains_key("hcl")
+        && passport.contains_key("ecl")
+        && passport.contains_key("pid")
+}
+
+fn validate_fields(key: &str, v: &str) -> bool {
+    match key {
+        "byr" => (1920..=2002).contains(&v.parse::<i32>().unwrap_or(0)),
+        "iyr" => (2010..=2020).contains(&v.parse::<i32>().unwrap_or(0)),
+        "eyr" => (2020..=2030).contains(&v.parse::<i32>().unwrap_or(0)),
+        "hgt" => {
+            let re = Regex::new(r"(\d*)(cm|in)").unwrap();
+            if let Some(captures) = re.captures(v) {
+                let number: i32 = captures[1].parse().unwrap();
+                let unit: String = captures[2].parse().unwrap();
+                match unit.as_str() {
+                    "cm" => (150..=193).contains(&number),
+                    "in" => (59..=76).contains(&number),
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        }
+        "hcl" => {
+            v.starts_with("#") && v.len() == 7 && v.chars().skip(1).all(|c| c.is_ascii_hexdigit())
+        }
+        "ecl" => match v {
+            "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => true,
+            _ => false,
+        },
+        "pid" => v.len() == 9 && v.chars().all(|c| c.is_numeric()),
+        "cid" => true,
+        _ => false,
+    }
+}
+
 pub struct Day04 {}
 impl Solver for Day04 {
     type Input = Vec<HashMap<String, String>>;
     type Output = usize;
 
     fn parse(input: &str) -> Result<Self::Input> {
-        let mut passports: Vec<HashMap<String, String>> = vec![HashMap::new()];
+        // TODO could probably use iterators here
+        // split_whitespace or split([':', ' ', '\n'])
+        let mut passports: Vec<HashMap<_, _>> = vec![HashMap::new()];
         for line in input.lines() {
             if line.is_empty() {
                 passports.push(HashMap::new());
@@ -23,98 +67,18 @@ impl Solver for Day04 {
                 .collect::<HashMap<String, String>>();
             passports.last_mut().unwrap().extend(line_fields);
         }
-        Ok(passports)
+        Ok(passports.into_iter().filter(|p| contains_keys(p)).collect())
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
-        input
-            .iter()
-            .filter(|p| {
-                p.contains_key("byr")
-                    && p.contains_key("iyr")
-                    && p.contains_key("eyr")
-                    && p.contains_key("hgt")
-                    && p.contains_key("hcl")
-                    && p.contains_key("ecl")
-                    && p.contains_key("pid")
-            })
-            .count()
+        input.iter().count()
     }
 
     fn part2(input: &Self::Input) -> Option<Self::Output> {
         Some(
             input
                 .iter()
-                .filter(|p| {
-                    p.contains_key("byr")
-                        && p.contains_key("iyr")
-                        && p.contains_key("eyr")
-                        && p.contains_key("hgt")
-                        && p.contains_key("hcl")
-                        && p.contains_key("ecl")
-                        && p.contains_key("pid")
-                })
-                .filter(|p| {
-                    if let Some(byr) = p.get("byr").and_then(|v| v.parse::<i32>().ok()) {
-                        if !(byr >= 1920 && byr <= 2002) {
-                            // println!("byr: {}", byr);
-                            return false;
-                        }
-                    }
-                    if let Some(iyr) = p.get("iyr").and_then(|v| v.parse::<i32>().ok()) {
-                        if !(iyr >= 2010 && iyr <= 2020) {
-                            // println!("iyr: {}", iyr);
-                            return false;
-                        }
-                    }
-                    if let Some(eyr) = p.get("eyr").and_then(|v| v.parse::<i32>().ok()) {
-                        if !(eyr >= 2020 && eyr <= 2030) {
-                            // println!("eyr: {}", eyr);
-                            return false;
-                        }
-                    }
-                    if let Some(hgt) = p.get("hgt") {
-                        let re = Regex::new(r"(\d*)(cm|in)").unwrap();
-                        if let Some(captures) = re.captures(hgt) {
-                            let number: i32 = captures[1].parse().unwrap();
-                            let unit: String = captures[2].parse().unwrap();
-                            let is_valid = match unit.as_str() {
-                                "cm" => number >= 150 && number <= 193,
-                                "in" => number >= 59 && number <= 76,
-                                _ => false,
-                            };
-
-                            if !is_valid {
-                                // println!("hgt: {} {:?}", hgt, captures);
-                                return false;
-                            }
-                        }
-                    }
-                    if let Some(hcl) = p.get("hcl") {
-                        let re = Regex::new(r"#[a-f\d]{6}").unwrap();
-                        if !re.is_match(hcl) {
-                            // println!("hcl: {}", hcl);
-                            return false;
-                        }
-                    }
-                    if let Some(ecl) = p.get("ecl") {
-                        match ecl.as_str() {
-                            "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => (),
-                            _ => {
-                                // println!("ecl: {}", ecl);
-                                return false;
-                            }
-                        }
-                    }
-                    if let Some(pid) = p.get("pid") {
-                        let re = Regex::new(r"\d{9}").unwrap();
-                        if !re.is_match(pid) {
-                            // println!("pid: {}", pid);
-                            return false;
-                        }
-                    }
-                    true
-                })
+                .filter(|p| p.iter().all(|(k, v)| validate_fields(k, v)))
                 .count(),
         )
     }
@@ -122,7 +86,7 @@ impl Solver for Day04 {
 
 #[cfg(test)]
 mod tests {
-    use super::Day04;
+    use super::{validate_fields, Day04};
     use crate::solver::Solver;
     use indoc::indoc;
 
@@ -196,5 +160,26 @@ mod tests {
         println!("result: {:?}", result);
 
         assert!(result == Some(4));
+    }
+
+    #[test]
+    fn validate() {
+        assert!(validate_fields("byr", "2002") == true);
+        assert!(validate_fields("byr", "2003") == false);
+
+        assert!(validate_fields("hgt", "60in") == true);
+        assert!(validate_fields("hgt", "190cm") == true);
+        assert!(validate_fields("hgt", "190in") == false);
+        assert!(validate_fields("hgt", "190") == false);
+
+        assert!(validate_fields("hcl", "#123abc") == true);
+        assert!(validate_fields("hcl", "#123abz") == false);
+        assert!(validate_fields("hcl", "123abc") == false);
+
+        assert!(validate_fields("ecl", "brn") == true);
+        assert!(validate_fields("ecl", "wat") == false);
+
+        assert!(validate_fields("pid", "000000001") == true);
+        assert!(validate_fields("pid", "0123456789") == false);
     }
 }
