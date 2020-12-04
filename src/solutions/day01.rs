@@ -1,7 +1,6 @@
+use crate::solver::{parse_line, Solver};
 use anyhow::Result;
 use itertools::Itertools;
-
-use crate::solver::{parse_line, Solver};
 
 pub struct Day01 {}
 
@@ -17,17 +16,47 @@ impl Solver for Day01 {
     type Input = Vec<i32>;
     type Output = i32;
 
-    fn parse_input(&self, input: &str) -> Result<Self::Input> {
+    fn parse(input: &str) -> Result<Self::Input> {
         input.lines().map(|l| parse_line(l)).collect()
     }
 
-    fn solve_part1(&self, input: &Self::Input) -> Self::Output {
+    fn part1(input: &Self::Input) -> Self::Output {
         let sums = find_sum(input.clone(), 2 as usize);
         sums.iter().product::<i32>()
     }
 
-    fn solve_part2(&self, input: &Self::Input) -> Option<Self::Output> {
+    fn part2(input: &Self::Input) -> Option<Self::Output> {
         let sums = find_sum(input.clone(), 3 as usize);
         Some(sums.iter().product::<i32>())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Day01;
+    use crate::solver::Solver;
+    use indoc::indoc;
+
+    const INPUTS: &str = indoc! {"
+        1721
+        979
+        366
+        299
+        675
+        1456
+    "};
+
+    #[test]
+    fn part1() {
+        let input = Day01::parse(INPUTS);
+        let result = Day01::part1(&input.unwrap());
+        assert!(result == 514579);
+    }
+
+    #[test]
+    fn part2() {
+        let input = Day01::parse(INPUTS);
+        let result = Day01::part2(&input.unwrap());
+        assert!(result.unwrap() == 241861950);
     }
 }

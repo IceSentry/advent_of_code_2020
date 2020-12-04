@@ -1,14 +1,20 @@
+use crate::solver::Solver;
 use anyhow::Context;
 use anyhow::Result;
 use regex::Regex;
+use serde_scan::scan;
 
-use crate::solver::Solver;
+#[allow(dead_code)]
+fn parse_regex(line: &str) -> Result<(i32, i32, char, String)> {
+    let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]*)")?;
+    let captures = re.captures(line).context("failed to match")?;
 
-#[derive(Debug)]
-pub struct PasswordPolicy {
-    lowest: i32,
-    highest: i32,
-    letter: char,
+    Ok((
+        captures[1].parse()?,
+        captures[2].parse()?,
+        captures[3].parse()?,
+        captures[4].parse()?,
+    ))
 }
 
 pub struct Day02 {}
@@ -17,24 +23,14 @@ impl Solver for Day02 {
     type Input = Vec<(i32, i32, char, String)>;
     type Output = usize;
 
-    fn parse_input(&self, input: &str) -> Result<Self::Input> {
+    fn parse(input: &str) -> Result<Self::Input> {
         input
             .lines()
-            .map(|l| {
-                let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]*)")?;
-                let captures = re.captures(l).with_context(|| "failed to match")?;
-
-                Ok((
-                    captures[1].parse()?,
-                    captures[2].parse()?,
-                    captures[3].parse()?,
-                    captures[4].parse()?,
-                ))
-            })
+            .map(|line| Ok(scan!("{}-{} {}:{}" <- line)?))
             .collect()
     }
 
-    fn solve_part1(&self, input: &Self::Input) -> Self::Output {
+    fn part1(input: &Self::Input) -> Self::Output {
         input
             .iter()
             .filter(|(lowest, highest, letter, password)| {
@@ -44,18 +40,15 @@ impl Solver for Day02 {
             .count()
     }
 
-    fn solve_part2(&self, input: &Self::Input) -> Option<Self::Output> {
+    fn part2(input: &Self::Input) -> Option<Self::Output> {
         Some(
             input
                 .iter()
                 .filter(|(lowest, highest, letter, password)| {
-                    match (
-                        password.chars().nth(*lowest as usize - 1),
-                        password.chars().nth(*highest as usize - 1),
-                    ) {
-                        (Some(a), Some(b)) => (a == *letter) != (b == *letter),
-                        _ => false,
-                    }
+                    let mut chars = password.chars();
+                    let a = chars.nth(*lowest as usize - 1);
+                    let b = chars.nth(*highest as usize - *lowest as usize - 2);
+                    (a == Some(*letter)) != (b == Some(*letter))
                 })
                 .count(),
         )
@@ -68,30 +61,23 @@ mod tests {
     use crate::solver::Solver;
     use indoc::indoc;
 
+    const INPUTS: &str = indoc! {"
+        1-3 a: abcde
+        1-3 b: cdefg
+        2-9 c: ccccccccc
+    "};
+
     #[test]
     fn part1() {
-        let inputs = indoc! {"
-            1-3 a: abcde
-            1-3 b: cdefg
-            2-9 c: ccccccccc
-        "};
-
-        let input = Day02 {}.parse_input(inputs);
-        let result = Day02 {}.solve_part1(&input.unwrap());
-        println!("result: {}", result);
+        let input = Day02::parse(INPUTS);
+        let result = Day02::part1(&input.unwrap());
         assert!(result == 2);
     }
 
     #[test]
     fn part2() {
-        let inputs = indoc! {"
-            1-3 a: abcde
-            1-3 b: cdefg
-            2-9 c: ccccccccc
-        "};
-
-        let input = Day02 {}.parse_input(inputs);
-        let result = Day02 {}.solve_part2(&input.unwrap());
+        let input = Day02::parse(INPUTS);
+        let result = Day02::part2(&input.unwrap());
         assert!(result.unwrap() == 1);
     }
 }
