@@ -21,21 +21,20 @@ impl Solver for Day05 {
     type Output = i32;
 
     fn parse(input: &str) -> Result<Self::Input> {
-        let vec: Result<Self::Input> = input
+        let mut vec: Self::Input = input
             .lines()
             .map(|l| {
                 let row = &l[..7].replace('F', "0").replace('B', "1");
                 let col = &l[7..].replace('L', "0").replace('R', "1");
-                let row = u8::from_str_radix(row, 2)?;
-                let col = u8::from_str_radix(col, 2)?;
-                Ok(Seat {
+                let row = u8::from_str_radix(row, 2).unwrap();
+                let col = u8::from_str_radix(col, 2).unwrap();
+                Seat {
                     row,
                     col,
                     id: row as i32 * 8 + col as i32,
-                })
+                }
             })
             .collect();
-        let mut vec = vec.unwrap();
         vec.sort();
         Ok(vec)
     }
@@ -68,12 +67,24 @@ mod tests {
         BBFFBBFRLL
     "};
 
+    const FILE_INPUTS: &str = include_str!("../../inputs/2020/05.txt");
+
     #[test]
     fn part1() {
         let input = Day05::parse(INPUTS);
         println!("{:#?}", input);
 
         let result = Day05::part1(&input.unwrap());
-        assert!(result == 820);
+        assert_eq!(result, 820);
+    }
+
+    #[test]
+    fn file() {
+        let input = Day05::parse(FILE_INPUTS).unwrap();
+        let result = Day05::part1(&input);
+        assert_eq!(result, 953);
+
+        let result = Day05::part2(&input);
+        assert_eq!(result, Some(615));
     }
 }

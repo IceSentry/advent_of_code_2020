@@ -52,22 +52,15 @@ impl Solver for Day04 {
     type Output = usize;
 
     fn parse(input: &str) -> Result<Self::Input> {
-        // TODO could probably use iterators here
-        // split_whitespace or split([':', ' ', '\n'])
-        let mut passports: Vec<HashMap<_, _>> = vec![HashMap::new()];
-        for line in input.lines() {
-            if line.is_empty() {
-                passports.push(HashMap::new());
-                continue;
-            }
-
-            let line_fields = line
-                .split(' ')
-                .map(|s| scan!("{}:{}" <- s).unwrap())
-                .collect::<HashMap<String, String>>();
-            passports.last_mut().unwrap().extend(line_fields);
-        }
-        Ok(passports.into_iter().filter(|p| contains_keys(p)).collect())
+        Ok(input
+            .split("\n\n")
+            .map(|l| {
+                l.split_whitespace()
+                    .map(|s| scan!("{}:{}" <- s).unwrap())
+                    .collect::<HashMap<String, String>>()
+            })
+            .filter(contains_keys)
+            .collect())
     }
 
     fn part1(input: &Self::Input) -> Self::Output {
