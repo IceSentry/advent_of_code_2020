@@ -76,6 +76,26 @@ fn bench<'a, S: Solver>(day: u8, input: &'a str) -> Result<()> {
     Ok(())
 }
 
+// fn bench2<'a, S: Solver>(c: &mut criterion::Criterion, day: u8, input: &'a str) -> Result<()> {
+//     let mut group = criterion.benchmark_group(format!("Day {}", day));
+
+//     group.bench_with_input("parser", &input, |b, i| {
+//         b.iter_with_large_drop(|| S::parse(i));
+//     });
+
+//     let input = S::parse(input)?;
+
+//     group.bench_with_input("part 1", &input, |b, i| {
+//         b.iter_batched(|| i, S::part1, criterion::BatchSize::SmallInput)
+//     });
+
+//     group.bench_with_input("part 2", &input, |b, i| {
+//         b.iter_batched(|| i, S::part2, criterion::BatchSize::SmallInput)
+//     });
+
+//     Ok(())
+// }
+
 fn solve<'a, S: Solver>(input: &'a str) -> Result<()> {
     let opts: Opts = Opts::parse();
     if opts.bench {
@@ -90,6 +110,26 @@ fn solve<'a, S: Solver>(input: &'a str) -> Result<()> {
     }
     Ok(())
 }
+
+// use paste::paste;
+
+// pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+// macro_rules! main {
+//     ($n:expr) => {
+//         paste! {
+//             mod [<d$n>];
+//             use [<d$n>]::solve;
+//             fn main() -> Result<()> {
+//                 let i = std::fs::read_to_string(format!("inp/d{}", $n))?;
+//                 dbg!(solve(&i));
+//                 Ok(())
+//             }
+//         }
+//     };
+// }
+
+// main!(4);
 
 fn main() -> Result<()> {
     dotenv::dotenv().expect("Failed to load .env");
@@ -106,6 +146,7 @@ fn main() -> Result<()> {
         2 => day!(02, &input)?,
         3 => day!(03, &input)?,
         4 => day!(04, &input)?,
+        5 => day!(05, &input)?,
         day => println!("day {} not solved yet", day),
     };
 

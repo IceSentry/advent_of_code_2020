@@ -1,8 +1,8 @@
 use crate::solver::Solver;
 use anyhow::Result;
 
-pub struct Day04 {}
-impl Solver for Day04 {
+pub struct Day0X {}
+impl Solver for Day0X {
     type Input = Vec<i32>;
     type Output = i32;
 
@@ -15,13 +15,13 @@ impl Solver for Day04 {
     }
 
     fn part2(input: &Self::Input) -> Option<Self::Output> {
-        todo!()
+        None
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Day04;
+    use super::Day0X;
     use crate::solver::Solver;
     use indoc::indoc;
 
@@ -30,15 +30,15 @@ mod tests {
 
     #[test]
     fn part1() {
-        let input = Day04::parse(INPUTS);
-        let result = Day04::part1(&input.unwrap());
+        let input = Day0X::parse(INPUTS);
+        let result = Day0X::part1(&input.unwrap());
         assert!(result == 0);
     }
 
     #[test]
     fn part2() {
-        let input = Day04::parse(INPUTS);
-        let result = Day04::part2(&input.unwrap());
+        let input = Day0X::parse(INPUTS);
+        let result = Day0X::part2(&input.unwrap());
         assert!(result.unwrap() == 0);
     }
 }
