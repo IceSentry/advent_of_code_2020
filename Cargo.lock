@@ -8,7 +8,6 @@ dependencies = [
  "helper",
  "indoc",
  "itertools",
- "num-traits",
  "regex",
  "serde_scan",
 ]

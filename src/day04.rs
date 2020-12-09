@@ -32,12 +32,9 @@ fn validate_fields(key: &str, v: &str) -> bool {
             }
         }
         "hcl" => {
-            v.starts_with("#") && v.len() == 7 && v.chars().skip(1).all(|c| c.is_ascii_hexdigit())
+            v.starts_with('#') && v.len() == 7 && v.chars().skip(1).all(|c| c.is_ascii_hexdigit())
         }
-        "ecl" => match v {
-            "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => true,
-            _ => false,
-        },
+        "ecl" => matches!(v, "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth"),
         "pid" => v.len() == 9 && v.chars().all(|c| c.is_numeric()),
         "cid" => true,
         _ => false,
@@ -55,12 +52,12 @@ pub fn parse(input: &str) -> Vec<HashMap<String, String>> {
         .filter(contains_keys)
         .collect()
 }
-
-pub fn part_1(input: &Vec<HashMap<String, String>>) -> usize {
+//
+pub fn part_1(input: &[HashMap<String, String>]) -> usize {
     input.iter().count()
 }
 
-pub fn part_2(input: &Vec<HashMap<String, String>>) -> usize {
+pub fn part_2(input: &[HashMap<String, String>]) -> usize {
     input
         .iter()
         .filter(|p| p.iter().all(|(k, v)| validate_fields(k, v)))

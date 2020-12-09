@@ -9,7 +9,6 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0.34"
 itertools = "0.9.0"
-num-traits = "0.2.14"
 indoc = "1.0.3"
 regex = "1.4.2"
 serde_scan = "0.4.1"

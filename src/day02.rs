@@ -1,20 +1,4 @@
-use anyhow::Context;
-use anyhow::Result;
-use regex::Regex;
 use serde_scan::scan;
-
-#[allow(dead_code)]
-pub fn parse_regex(line: &str) -> Result<(i32, i32, char, String)> {
-    let re = Regex::new(r"(\d+)-(\d+) ([a-z]): ([a-z]*)")?;
-    let captures = re.captures(line).context("failed to match")?;
-
-    Ok((
-        captures[1].parse()?,
-        captures[2].parse()?,
-        captures[3].parse()?,
-        captures[4].parse()?,
-    ))
-}
 
 pub fn parse(input: &str) -> Vec<(i32, i32, char, String)> {
     input
@@ -23,7 +7,7 @@ pub fn parse(input: &str) -> Vec<(i32, i32, char, String)> {
         .collect()
 }
 
-pub fn part_1(input: &Vec<(i32, i32, char, String)>) -> usize {
+pub fn part_1(input: &[(i32, i32, char, String)]) -> usize {
     input
         .iter()
         .filter(|(lowest, highest, letter, password)| {
@@ -33,7 +17,7 @@ pub fn part_1(input: &Vec<(i32, i32, char, String)>) -> usize {
         .count()
 }
 
-pub fn part_2(input: &Vec<(i32, i32, char, String)>) -> usize {
+pub fn part_2(input: &[(i32, i32, char, String)]) -> usize {
     input
         .iter()
         .filter(|(lowest, highest, letter, password)| {
