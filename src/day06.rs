@@ -1,27 +1,31 @@
-use itertools::Itertools;
-use serde_scan::scan;
+use std::collections::HashMap;
 
-fn find_sum(input: &[i32], n: usize) -> Vec<i32> {
+type FormGroup = (HashMap<char, usize>, usize);
+
+pub fn parse(input: &str) -> Vec<FormGroup> {
+    input
+        .split("\n\n")
+        .map(|group| {
+            let mut map = HashMap::new();
+            for s in group.split_whitespace() {
+                for c in s.chars() {
+                    *map.entry(c).or_insert(0) += 1;
+                }
+            }
+            (map, group.lines().count())
+        })
+        .collect()
+}
+
+pub fn part_1(input: &[FormGroup]) -> usize {
+    input.iter().map(|(group, _)| group.len()).sum()
+}
+
+pub fn part_2(input: &[FormGroup]) -> usize {
     input
         .iter()
-        .copied()
-        .combinations(n)
-        .find(|x| x.iter().sum::<i32>() == 2020)
-        .expect("There should be a valid combination")
-}
-
-pub fn parse(input: &str) -> Vec<i32> {
-    input.lines().map(|l| scan!("{}" <- l).unwrap()).collect()
-}
-
-pub fn part_1(input: &[i32]) -> i32 {
-    let sums = find_sum(input, 2 as usize);
-    sums.iter().product::<i32>()
-}
-
-pub fn part_2(input: &[i32]) -> i32 {
-    let sums = find_sum(input, 3 as usize);
-    sums.iter().product::<i32>()
+        .map(|(group, count)| group.iter().filter(|(_, v)| *v == count).count())
+        .sum()
 }
 
 #[cfg(test)]
@@ -34,29 +38,29 @@ mod tests {
         a
         b
         c
-        
+
         ab
         ac
-        
+
         a
         a
         a
         a
-        
+
         b
     "};
 
-    // #[test]
-    // pub fn part_1() {
-    //     let input = super::parse(INPUTS);
-    //     let result = super::part_1(&input);
-    //     assert_eq!(result, 11);
-    // }
+    #[test]
+    pub fn part_1() {
+        let input = super::parse(INPUTS);
+        let result = super::part_1(&input);
+        assert_eq!(result, 11);
+    }
 
-    // #[test]
-    // pub fn part_2() {
-    //     let input = super::parse(INPUTS);
-    //     let result = super::part_2(&input);
-    //     assert_eq!(result, 241861950);
-    // }
+    #[test]
+    pub fn part_2() {
+        let input = super::parse(INPUTS);
+        let result = super::part_2(&input);
+        assert_eq!(result, 6);
+    }
 }
