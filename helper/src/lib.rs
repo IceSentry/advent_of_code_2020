@@ -7,6 +7,7 @@ use colored::*;
 
 pub use clap;
 pub use criterion;
+pub use dotenv;
 
 pub mod input;
 
@@ -42,10 +43,12 @@ pub struct Opts {
     pub day: String,
     #[clap(short, long)]
     pub bench: bool,
+    #[clap(short, long)]
+    pub download: bool,
 }
 
 #[macro_export]
-macro_rules! main2 {
+macro_rules! main {
     (
         year $year: expr;
         $( $day: ident $( : $parser: ident )? => $( $solution: ident ),+ );+
@@ -61,12 +64,19 @@ macro_rules! main2 {
         const DAYS: &[&str] = &[$(stringify!($day)),*];
 
         fn main() {
+            $crate::dotenv::dotenv().expect("Failed to load .env");
+
             let mut opt = $crate::Opts::parse();
             let module_name = format!("day{}", opt.day);
+            let day: u8 = opt.day.parse().expect("Day is not a number");
 
             if opt.bench {
                 bench::run_bench(module_name);
                 return
+            }
+
+            if opt.download {
+                $crate::input::get_input($year, day).unwrap();
             }
 
 
@@ -80,7 +90,6 @@ macro_rules! main2 {
 
             $(
                 if stringify!($day) == module_name {
-                    let day: u8 = opt.day.parse().expect("Day is not a number");
                     println!("Day {}", day);
 
                     let data = $crate::input::get_input(YEAR, day).expect("could not fetch input");

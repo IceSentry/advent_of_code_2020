@@ -15,12 +15,12 @@ pub fn parse(input: &str) -> Vec<i32> {
 }
 
 pub fn part_1(input: &[i32]) -> i32 {
-    let sums = find_sum(input, 2 as usize);
+    let sums = find_sum(input, 2);
     sums.iter().product::<i32>()
 }
 
 pub fn part_2(input: &[i32]) -> i32 {
-    let sums = find_sum(input, 3 as usize);
+    let sums = find_sum(input, 3);
     sums.iter().product::<i32>()
 }
 

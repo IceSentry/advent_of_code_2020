@@ -143,22 +143,22 @@ mod tests {
     #[test]
     fn validate() {
         use super::validate_fields;
-        assert!(validate_fields("byr", "2002") == true);
-        assert!(validate_fields("byr", "2003") == false);
+        assert!(validate_fields("byr", "2002"));
+        assert!(!validate_fields("byr", "2003"));
 
-        assert!(validate_fields("hgt", "60in") == true);
-        assert!(validate_fields("hgt", "190cm") == true);
-        assert!(validate_fields("hgt", "190in") == false);
-        assert!(validate_fields("hgt", "190") == false);
+        assert!(validate_fields("hgt", "60in"));
+        assert!(validate_fields("hgt", "190cm"));
+        assert!(!validate_fields("hgt", "190in"));
+        assert!(!validate_fields("hgt", "190"));
 
-        assert!(validate_fields("hcl", "#123abc") == true);
-        assert!(validate_fields("hcl", "#123abz") == false);
-        assert!(validate_fields("hcl", "123abc") == false);
+        assert!(validate_fields("hcl", "#123abc"));
+        assert!(!validate_fields("hcl", "#123abz"));
+        assert!(!validate_fields("hcl", "123abc"));
 
-        assert!(validate_fields("ecl", "brn") == true);
-        assert!(validate_fields("ecl", "wat") == false);
+        assert!(validate_fields("ecl", "brn"));
+        assert!(!validate_fields("ecl", "wat"));
 
-        assert!(validate_fields("pid", "000000001") == true);
-        assert!(validate_fields("pid", "0123456789") == false);
+        assert!(validate_fields("pid", "000000001"));
+        assert!(!validate_fields("pid", "0123456789"));
     }
 }
