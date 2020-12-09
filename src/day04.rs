@@ -1,5 +1,3 @@
-use crate::solver::Solver;
-use anyhow::Result;
 use regex::Regex;
 use serde_scan::scan;
 use std::collections::HashMap;
@@ -46,41 +44,31 @@ fn validate_fields(key: &str, v: &str) -> bool {
     }
 }
 
-pub struct Day04 {}
-impl Solver for Day04 {
-    type Input = Vec<HashMap<String, String>>;
-    type Output = usize;
+pub fn parse(input: &str) -> Vec<HashMap<String, String>> {
+    input
+        .split("\n\n")
+        .map(|l| {
+            l.split_whitespace()
+                .map(|s| scan!("{}:{}" <- s).unwrap())
+                .collect::<HashMap<String, String>>()
+        })
+        .filter(contains_keys)
+        .collect()
+}
 
-    fn parse(input: &str) -> Result<Self::Input> {
-        Ok(input
-            .split("\n\n")
-            .map(|l| {
-                l.split_whitespace()
-                    .map(|s| scan!("{}:{}" <- s).unwrap())
-                    .collect::<HashMap<String, String>>()
-            })
-            .filter(contains_keys)
-            .collect())
-    }
+pub fn part_1(input: &Vec<HashMap<String, String>>) -> usize {
+    input.iter().count()
+}
 
-    fn part1(input: &Self::Input) -> Self::Output {
-        input.iter().count()
-    }
-
-    fn part2(input: &Self::Input) -> Option<Self::Output> {
-        Some(
-            input
-                .iter()
-                .filter(|p| p.iter().all(|(k, v)| validate_fields(k, v)))
-                .count(),
-        )
-    }
+pub fn part_2(input: &Vec<HashMap<String, String>>) -> usize {
+    input
+        .iter()
+        .filter(|p| p.iter().all(|(k, v)| validate_fields(k, v)))
+        .count()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{validate_fields, Day04};
-    use crate::solver::Solver;
     use indoc::indoc;
 
     const INPUTS: &str = indoc! {"
@@ -100,18 +88,18 @@ mod tests {
     "};
 
     #[test]
-    fn part1() {
-        let input = Day04::parse(INPUTS);
+    pub fn part_1() {
+        let input = super::parse(INPUTS);
         println!("{:?}", input);
 
-        let result = Day04::part1(&input.unwrap());
+        let result = super::part_1(&input);
         println!("result: {}", result);
 
         assert!(result == 2);
     }
 
     #[test]
-    fn part2_invalid() {
+    pub fn part_2_invalid() {
         let invalid = indoc! {"
             eyr:1972 cid:100
             hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926
@@ -127,13 +115,13 @@ mod tests {
             eyr:2038 hcl:74454a iyr:2023
             pid:3556412378 byr:2007
         "};
-        let input = Day04::parse(invalid);
-        let result = Day04::part2(&input.unwrap());
-        assert!(result == Some(0));
+        let input = super::parse(invalid);
+        let result = super::part_2(&input);
+        assert!(result == 0);
     }
 
     #[test]
-    fn part2_valid() {
+    pub fn part_2_valid() {
         let valid = indoc! {"
             pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
             hcl:#623a2f
@@ -148,15 +136,16 @@ mod tests {
             
             iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
         "};
-        let input = Day04::parse(valid);
-        let result = Day04::part2(&input.unwrap());
+        let input = super::parse(valid);
+        let result = super::part_2(&input);
         println!("result: {:?}", result);
 
-        assert!(result == Some(4));
+        assert!(result == 4);
     }
 
     #[test]
     fn validate() {
+        use super::validate_fields;
         assert!(validate_fields("byr", "2002") == true);
         assert!(validate_fields("byr", "2003") == false);
 
