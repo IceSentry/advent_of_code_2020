@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 type Data = HashMap<String, Vec<(u32, String)>>;
 
@@ -35,33 +35,37 @@ pub fn parse<'a>(input: &'a str) -> Data {
         .collect()
 }
 
-pub fn part_1(input: &Data) -> usize {
-    fn contains_bag(curr: &str, target: &str, data: &Data) -> bool {
-        if curr == target {
-            true
-        } else {
-            data[curr]
-                .iter()
-                .any(|(_qty, color)| contains_bag(color, target, data))
+fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashSet<&'a str>) -> bool {
+    if !cache.contains(curr) {
+        let result = data[curr]
+            .iter()
+            .any(|(_qty, color)| contains_bag(color, data, cache));
+        if result {
+            cache.insert(curr);
         }
     }
+    cache.contains(curr)
+}
 
+fn count_bags(container: &str, data: &Data) -> u32 {
+    data[container]
+        .iter()
+        .map(|(qty, color)| *qty * count_bags(color, data))
+        .sum::<u32>()
+        + 1
+}
+
+pub fn part_1(input: &Data) -> usize {
+    let mut cache = HashSet::new();
+    cache.insert("shiny gold");
     input
         .keys()
-        .filter(|bag| contains_bag(bag, "shiny gold", input))
+        .filter(|bag| contains_bag(bag, input, &mut cache))
         .count()
         - 1
 }
 
 pub fn part_2(input: &Data) -> u32 {
-    fn count_bags(curr: &str, data: &Data) -> u32 {
-        data[curr]
-            .iter()
-            .map(|(qty, color)| *qty * count_bags(color, data))
-            .sum::<u32>()
-            + 1
-    }
-
     count_bags("shiny gold", input) - 1
 }
 
