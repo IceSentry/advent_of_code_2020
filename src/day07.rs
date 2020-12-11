@@ -1,4 +1,5 @@
-use std::collections::{HashMap, HashSet};
+use rayon::prelude::*;
+use std::collections::HashMap;
 
 type Data = HashMap<String, Vec<(u32, String)>>;
 
@@ -6,32 +7,31 @@ pub fn parse(input: &str) -> Data {
     // TODO regex would probably be much cleaner here
     input
         .lines()
-        .map(
-            |line| match *line.split(" bags contain ").collect::<Vec<_>>().as_slice() {
-                [container, bags] => (
-                    container.to_string(),
-                    bags.split(',')
-                        .map(|s| {
-                            s.trim()
-                                .replace("bags", "")
-                                .replace("bag", "")
-                                .trim_end_matches('.')
-                                .trim()
-                                .to_string()
-                        })
-                        .filter(|bag| bag != "no other")
-                        .map(|bag| {
-                            let mut chars = bag.chars();
-                            (
-                                chars.nth(0).unwrap().to_digit(10).unwrap(),
-                                chars.as_str().trim().to_string(),
-                            )
-                        })
-                        .collect(),
-                ),
-                _ => unreachable!(),
-            },
-        )
+        .map(|line| line.split(" bags contain ").collect::<Vec<_>>())
+        .map(|line| match *line.as_slice() {
+            [container, bags] => (
+                container.to_string(),
+                bags.split(',')
+                    .map(|s| {
+                        s.trim()
+                            .replace("bags", "")
+                            .replace("bag", "")
+                            .trim_end_matches('.')
+                            .trim()
+                            .to_string()
+                    })
+                    .filter(|bag| bag != "no other")
+                    .map(|bag| match bag.chars().collect::<Vec<_>>().as_slice() {
+                        [qty, color @ ..] => (
+                            qty.to_digit(10).unwrap(),
+                            color.iter().collect::<String>().trim().to_string(),
+                        ),
+                        _ => unreachable!(),
+                    })
+                    .collect(),
+            ),
+            _ => unreachable!(),
+        })
         .collect()
 }
 
@@ -45,28 +45,26 @@ pub fn part_1(input: &Data) -> usize {
 
     input
         .keys()
+        .collect::<Vec<&String>>()
+        .par_iter()
         .filter(|bag| contains_bag(bag, "shiny gold", input))
         .count()
         - 1
 }
 
 pub fn part_1_cache(input: &Data) -> usize {
-    fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashSet<&'a str>) -> bool {
-        if !cache.contains(curr) {
+    fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashMap<&'a str, bool>) -> bool {
+        if !cache.contains_key(curr) {
             let result = data[curr]
                 .iter()
                 .any(|(_qty, color)| contains_bag(color, data, cache));
-            if result {
-                cache.insert(curr);
-            }
-            result
-        } else {
-            true
+            cache.insert(curr, result);
         }
+        cache[curr]
     }
 
-    let mut cache = HashSet::new();
-    cache.insert("shiny gold");
+    let mut cache = HashMap::new();
+    cache.insert("shiny gold", true);
     input
         .keys()
         .filter(|bag| contains_bag(bag, input, &mut cache))
@@ -77,7 +75,7 @@ pub fn part_1_cache(input: &Data) -> usize {
 pub fn part_2(input: &Data) -> u32 {
     fn count_bags(container: &str, data: &Data) -> u32 {
         data[container]
-            .iter()
+            .par_iter()
             .map(|(qty, color)| *qty * count_bags(color, data))
             .sum::<u32>()
             + 1

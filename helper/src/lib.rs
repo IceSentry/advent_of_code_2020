@@ -6,6 +6,7 @@ use clap::Clap;
 use colored::*;
 
 pub use clap;
+pub use colored;
 pub use criterion;
 pub use dotenv;
 
@@ -17,13 +18,13 @@ const DISPLAY_WIDTH: usize = 40;
 
 pub fn print_with_duration(line: &str, output: Option<&str>, duration: Duration) {
     let duration = format!("({:.2?})", duration);
-    print!("  - {} {}", line, duration.dimmed());
+    print!("  - {} {}", line, duration.bright_black());
 
     if let Some(output) = output {
         let width = "  - ".len() + line.chars().count() + 1 + duration.chars().count();
         let dots = DISPLAY_WIDTH - min(DISPLAY_WIDTH - 5, width) - 2;
         let dots: String = iter::repeat('.').take(dots).collect();
-        print!(" {}", dots.dimmed());
+        print!(" {}", dots.bright_black());
 
         if output.contains('\n') {
             println!();
@@ -63,12 +64,14 @@ macro_rules! main {
         use std::{fs, path::Path};
 
         use $crate::clap::Clap;
+        use $crate::colored::*;
 
         const YEAR: u16 = $year;
         const DAYS: &[&str] = &[$(stringify!($day)),*];
 
         fn main() {
             $crate::dotenv::dotenv().expect("Failed to load .env");
+            // control::set_virtual_terminal(true).expect("Failed to set virtual terminal");
 
             let mut opt = $crate::Opts::parse();
             let module_name = format!("day{}", opt.day);
