@@ -11,6 +11,8 @@ pub use dotenv;
 
 pub mod input;
 
+pub const TEMPLATE: &str = include_str!("./template.rs");
+
 const DISPLAY_WIDTH: usize = 40;
 
 pub fn print_with_duration(line: &str, output: Option<&str>, duration: Duration) {
@@ -45,6 +47,8 @@ pub struct Opts {
     pub bench: bool,
     #[clap(short, long)]
     pub download: bool,
+    #[clap(short, long)]
+    pub init: bool,
 }
 
 #[macro_export]
@@ -54,9 +58,9 @@ macro_rules! main {
         $( $day: ident $( : $parser: ident )? => $( $solution: ident ),+ );+
         $( ; )?
     ) => {
-        use std::fs::read_to_string;
         use std::io::Read;
         use std::time::Instant;
+        use std::{fs, path::Path};
 
         use $crate::clap::Clap;
 
@@ -75,10 +79,16 @@ macro_rules! main {
                 return
             }
 
-            if opt.download {
+            if opt.download || opt.init  {
                 $crate::input::get_input($year, day).unwrap();
             }
 
+            if opt.init {
+                let filename = format!("./src/day{}.rs", opt.day);
+                let file_path = Path::new(&filename);
+                fs::write(file_path, $crate::TEMPLATE).expect("Failed to write file");
+                println!("new file created at {}", file_path.display());
+            }
 
             if !DAYS.contains(&module_name.as_str()) {
                 eprintln!(

@@ -1,12 +1,7 @@
-use serde_scan::scan;
-
-type Data = i32;
+type Data<'a> = &'a str;
 
 pub fn parse(input: &str) -> Vec<Data> {
-    input
-        .lines()
-        .map(|line| scan!("{}" <- line).unwrap())
-        .collect()
+    input.lines().collect()
 }
 
 pub fn part_1(input: &[Data]) -> usize {
@@ -28,13 +23,13 @@ mod tests {
     pub fn part_1() {
         let input = super::parse(INPUTS);
         let result = super::part_1(&input);
-        assert!(result == 2);
+        assert_eq!(result, 1);
     }
 
     #[test]
     pub fn part_2() {
         let input = super::parse(INPUTS);
         let result = super::part_2(&input);
-        assert!(result == 1);
+        assert_eq!(result, 2);
     }
 }

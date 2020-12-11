@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 type Data = HashMap<String, Vec<(u32, String)>>;
 
-pub fn parse<'a>(input: &'a str) -> Data {
+pub fn parse(input: &str) -> Data {
     // TODO regex would probably be much cleaner here
     input
         .lines()
