@@ -35,27 +35,36 @@ pub fn parse<'a>(input: &'a str) -> Data {
         .collect()
 }
 
-fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashSet<&'a str>) -> bool {
-    if !cache.contains(curr) {
-        let result = data[curr]
-            .iter()
-            .any(|(_qty, color)| contains_bag(color, data, cache));
-        if result {
-            cache.insert(curr);
+pub fn part_1(input: &Data) -> usize {
+    fn contains_bag(curr: &str, target: &str, data: &Data) -> bool {
+        curr == target
+            || data[curr]
+                .iter()
+                .any(|(_qty, color)| contains_bag(color, target, data))
+    }
+
+    input
+        .keys()
+        .filter(|bag| contains_bag(bag, "shiny gold", input))
+        .count()
+        - 1
+}
+
+pub fn part_1_cache(input: &Data) -> usize {
+    fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashSet<&'a str>) -> bool {
+        if !cache.contains(curr) {
+            let result = data[curr]
+                .iter()
+                .any(|(_qty, color)| contains_bag(color, data, cache));
+            if result {
+                cache.insert(curr);
+            }
+            result
+        } else {
+            true
         }
     }
-    cache.contains(curr)
-}
 
-fn count_bags(container: &str, data: &Data) -> u32 {
-    data[container]
-        .iter()
-        .map(|(qty, color)| *qty * count_bags(color, data))
-        .sum::<u32>()
-        + 1
-}
-
-pub fn part_1(input: &Data) -> usize {
     let mut cache = HashSet::new();
     cache.insert("shiny gold");
     input
@@ -66,6 +75,14 @@ pub fn part_1(input: &Data) -> usize {
 }
 
 pub fn part_2(input: &Data) -> u32 {
+    fn count_bags(container: &str, data: &Data) -> u32 {
+        data[container]
+            .iter()
+            .map(|(qty, color)| *qty * count_bags(color, data))
+            .sum::<u32>()
+            + 1
+    }
+
     count_bags("shiny gold", input) - 1
 }
 
