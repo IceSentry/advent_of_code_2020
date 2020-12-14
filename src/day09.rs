@@ -28,7 +28,7 @@ fn find_contiguous_combinations(input: &[Data], target: Data) -> Data {
     while acc != target {
         acc += input[last];
         last += 1;
-        if last >= input.len() {
+        if last >= input.len() || acc + input[last] > target {
             first += 1;
             last = first + 1;
             acc = input[first];
