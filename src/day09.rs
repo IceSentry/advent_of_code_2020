@@ -21,12 +21,36 @@ fn find_wrong_value(input: &[Data], offset: usize) -> Data {
     unreachable!()
 }
 
+fn find_contiguous_combinations(input: &[Data], target: Data) -> Vec<Data> {
+    let mut acc = 0;
+    let mut index = 0;
+    let mut last_index = 0;
+    let mut values = vec![];
+    while acc != target {
+        index += 1;
+        if index >= input.len() {
+            last_index += 1;
+            index = last_index;
+            values.clear();
+            acc = 0;
+        }
+        acc += input[index];
+        values.push(input[index]);
+    }
+    values.sort();
+    values
+}
+
 pub fn part_1(input: &[Data]) -> Data {
     find_wrong_value(input, 25)
 }
 
-pub fn part_2(input: &[Data]) -> usize {
-    0
+pub fn part_2(input: &[Data]) -> Data {
+    let target = find_wrong_value(input, 25);
+    let result = find_contiguous_combinations(&input, target);
+    let first = result.first().unwrap();
+    let last = result.last().unwrap();
+    first + last
 }
 
 #[cfg(test)]
@@ -66,7 +90,12 @@ mod tests {
     #[test]
     pub fn part_2() {
         let input = super::parse(INPUTS);
-        let result = super::part_2(&input);
-        assert_eq!(result, 2);
+        let target = super::find_wrong_value(&input, 5);
+        let result = super::find_contiguous_combinations(&input, target);
+        let first = result.first().unwrap();
+        let last = result.last().unwrap();
+        assert_eq!(first, &15);
+        assert_eq!(last, &47);
+        assert_eq!(first + last, 62);
     }
 }
