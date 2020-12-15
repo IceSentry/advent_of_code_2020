@@ -35,7 +35,7 @@ fn find_contiguous_combinations(input: &[Data], target: Data) -> Data {
         }
     }
     let mut values = input[first..last].to_vec();
-    values.sort();
+    values.sort_unstable();
     values.first().unwrap() + values.last().unwrap()
 }
 

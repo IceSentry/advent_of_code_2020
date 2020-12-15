@@ -1,7 +1,7 @@
-type Data<'a> = &'a str;
+type Data = i32;
 
 pub fn parse(input: &str) -> Vec<Data> {
-    input.lines().collect()
+    input.lines().map(|l| l.parse().unwrap()).collect()
 }
 
 pub fn part_1(input: &[Data]) -> usize {
