@@ -4,6 +4,7 @@ type Data = i32;
 
 pub fn parse(input: &str) -> Vec<Data> {
     let mut data: Vec<Data> = input.lines().map(|l| l.parse().unwrap()).collect();
+    data.push(0);
     data.sort_unstable();
     data
 }
@@ -14,13 +15,29 @@ pub fn part_1(input: &[Data]) -> usize {
         let delta = adapter[1] - adapter[0];
         *map.entry(delta).or_insert(1) += 1;
     }
-    println!("{:?}", map);
-
     map.get(&1).unwrap() * map.get(&3).unwrap()
 }
 
-pub fn part_2(input: &[Data]) -> usize {
-    0
+fn count_paths(input: &[Data], cache: &mut HashMap<usize, u64>, i: usize) -> u64 {
+    if i >= input.len() - 1 {
+        1
+    } else if cache.contains_key(&i) {
+        cache[&i]
+    } else {
+        let mut answer = 0;
+        for j in i + 1..input.len() {
+            if input[j] - input[i] <= 3 {
+                answer += count_paths(input, cache, j);
+            }
+        }
+        cache.insert(i, answer);
+        answer
+    }
+}
+
+pub fn part_2(input: &[Data]) -> u64 {
+    let mut cache = HashMap::new();
+    count_paths(input, &mut cache, 0)
 }
 
 #[cfg(test)]
@@ -86,6 +103,6 @@ mod tests {
     pub fn part_2() {
         let input = super::parse(INPUTS);
         let result = super::part_2(&input);
-        assert_eq!(result, 2);
+        assert_eq!(result, 8);
     }
 }
