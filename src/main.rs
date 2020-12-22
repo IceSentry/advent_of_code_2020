@@ -11,6 +11,7 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 main! {
     year 2020;
@@ -25,4 +26,5 @@ main! {
     day09 : parse => part_1, part_2;
     day10 : parse => part_1, part_2;
     day11 : parse => part_1, part_2;
+    day12 : parse => part_1, part_2;
 }
