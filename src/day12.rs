@@ -46,8 +46,45 @@ pub fn part_1(input: &[Data]) -> f32 {
     (east.abs() + north.abs()).round()
 }
 
+fn rot(x: f32, y: f32, d: &f32) -> (f32, f32) {
+    match *d as i32 {
+        90 => (-y, x),
+        180 => (-x, -y),
+        270 => (y, -x),
+        _ => unreachable!(),
+    }
+}
+
 pub fn part_2(input: &[Data]) -> f32 {
-    0.0
+    let mut east = 0.0;
+    let mut north = 0.0;
+    let mut east_waypoint = 10.0;
+    let mut north_waypoint = 1.0;
+    for (dir, value) in input.iter() {
+        match dir {
+            'N' => north_waypoint += value,
+            'S' => north_waypoint -= value,
+            'E' => east_waypoint += value,
+            'W' => east_waypoint -= value,
+            'L' => {
+                let (a, b) = rot(east_waypoint, north_waypoint, value);
+                east_waypoint = a;
+                north_waypoint = b;
+            }
+            'R' => {
+                let (a, b) = rot(east_waypoint, north_waypoint, &(360.0 - value));
+                east_waypoint = a;
+                north_waypoint = b;
+            }
+            'F' => {
+                east += east_waypoint * value;
+                north += north_waypoint * value;
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    (east.abs() + north.abs()).round()
 }
 
 #[cfg(test)]
