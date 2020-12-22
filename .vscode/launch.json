@@ -22,43 +22,5 @@
             "args": [],
             "cwd": "${workspaceFolder}"
         },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in executable 'advent_of_code_2020'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=advent_of_code_2020",
-                    "--package=advent_of_code_2020"
-                ],
-                "filter": {
-                    "name": "advent_of_code_2020",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in library 'helper'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--lib",
-                    "--package=helper"
-                ],
-                "filter": {
-                    "name": "helper",
-                    "kind": "lib"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        }
     ]
 }
