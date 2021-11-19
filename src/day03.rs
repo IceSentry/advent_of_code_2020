@@ -15,11 +15,13 @@ pub fn parse(input: &str) -> Vec<Vec<char>> {
     input.lines().map(|l| l.chars().collect()).collect()
 }
 
-pub fn part_1(input: &[Vec<char>]) -> i64 {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<Vec<char>>) -> i64 {
     count_trees(input, (3, 1))
 }
 
-pub fn part_2(input: &[Vec<char>]) -> i64 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<Vec<char>>) -> i64 {
     let slopes = vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
     slopes
         .iter()

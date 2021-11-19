@@ -17,11 +17,13 @@ pub fn parse(input: &str) -> Vec<FormGroup> {
         .collect()
 }
 
-pub fn part_1(input: &[FormGroup]) -> usize {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<FormGroup>) -> usize {
     input.iter().map(|(group, _)| group.len()).sum()
 }
 
-pub fn part_2(input: &[FormGroup]) -> usize {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<FormGroup>) -> usize {
     input
         .iter()
         .map(|(group, count)| group.iter().filter(|(_, v)| *v == count).count())

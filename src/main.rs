@@ -1,5 +1,3 @@
-use helper::main;
-
 mod day01;
 mod day02;
 mod day03;
@@ -13,18 +11,18 @@ mod day10;
 mod day11;
 mod day12;
 
-main! {
-    year 2020;
-    day01 : parse => part_1, part_2;
-    day02 : parse => part_1, part_2;
-    day03 : parse => part_1, part_2;
-    day04 : parse => part_1, part_2;
-    day05 : parse => part_1, part_2;
-    day06 : parse => part_1, part_2;
-    day07 : parse => part_1, part_1_cache, part_2;
-    day08 : parse => part_1, part_2, part_2_par;
-    day09 : parse => part_1, part_2;
-    day10 : parse => part_1, part_2;
-    day11 : parse => part_1, part_2;
-    day12 : parse => part_1, part_2;
+aoc_helper::main! {
+    year: 2020;
+    day01: parse => part_1, part_2;
+    day02: parse => part_1, part_2;
+    day03: parse => part_1, part_2;
+    day04: parse => part_1, part_2;
+    day05: parse => part_1, part_2;
+    day06: parse => part_1, part_2;
+    day07: parse => part_1, part_1_cache, part_2;
+    day08: parse => part_1, part_2, part_2_par;
+    // day09: parse => part_1, part_2;
+    // day10: parse => part_1, part_2;
+    // day11: parse => part_1, part_2;
+    // day12: parse => part_1, part_2;
 }

@@ -46,12 +46,14 @@ fn run(instructions: &[Data]) -> (i32, ExitCondition) {
     }
 }
 
-pub fn part_1(input: &[Data]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<Data>) -> i32 {
     let (acc, _) = run(input);
     acc
 }
 
-pub fn part_2(input: &[Data]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<Data>) -> i32 {
     input
         .iter()
         .enumerate()
@@ -74,7 +76,8 @@ pub fn part_2(input: &[Data]) -> i32 {
         .unwrap()
 }
 
-pub fn part_2_par(input: &[Data]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2_par(input: &Vec<Data>) -> i32 {
     input
         .par_iter()
         .enumerate()
@@ -101,20 +104,19 @@ pub fn part_2_par(input: &[Data]) -> i32 {
 mod tests {
     use indoc::indoc;
 
-    const INPUTS: &str = indoc! {"
-        nop +0
-        acc +1
-        jmp +4
-        acc +3
-        jmp -3
-        acc -99
-        acc +1
-        nop -4
-        acc +6
-    "};
-
     #[test]
     pub fn part_1() {
+        const INPUTS: &str = indoc! {"
+            nop +0
+            acc +1
+            jmp +4
+            acc +3
+            jmp -3
+            acc -99
+            acc +1
+            jmp -4
+            acc +6
+        "};
         let input = super::parse(INPUTS);
         let result = super::part_1(&input);
         assert_eq!(result, 5);
@@ -122,6 +124,17 @@ mod tests {
 
     #[test]
     pub fn part_2() {
+        const INPUTS: &str = indoc! {"
+            nop +0
+            acc +1
+            jmp +4
+            acc +3
+            jmp -3
+            acc -99
+            acc +1
+            nop -4
+            acc +6
+        "};
         let input = super::parse(INPUTS);
         let result = super::part_2(&input);
         assert_eq!(result, 8);

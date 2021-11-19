@@ -45,7 +45,7 @@ pub fn part_1(input: &[Data]) -> Data {
 
 pub fn part_2(input: &[Data]) -> Data {
     let target = find_wrong_value(input, 25);
-    find_contiguous_combinations(&input, target)
+    find_contiguous_combinations(input, target)
 }
 
 #[cfg(test)]

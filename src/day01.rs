@@ -14,12 +14,14 @@ pub fn parse(input: &str) -> Vec<i32> {
     input.lines().map(|l| scan!("{}" <- l).unwrap()).collect()
 }
 
-pub fn part_1(input: &[i32]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<i32>) -> i32 {
     let sums = find_sum(input, 2);
     sums.iter().product::<i32>()
 }
 
-pub fn part_2(input: &[i32]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<i32>) -> i32 {
     let sums = find_sum(input, 3);
     sums.iter().product::<i32>()
 }

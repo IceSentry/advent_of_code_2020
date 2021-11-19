@@ -7,7 +7,8 @@ pub fn parse(input: &str) -> Vec<(i32, i32, char, String)> {
         .collect()
 }
 
-pub fn part_1(input: &[(i32, i32, char, String)]) -> usize {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<(i32, i32, char, String)>) -> usize {
     input
         .iter()
         .filter(|(lowest, highest, letter, password)| {
@@ -17,7 +18,8 @@ pub fn part_1(input: &[(i32, i32, char, String)]) -> usize {
         .count()
 }
 
-pub fn part_2(input: &[(i32, i32, char, String)]) -> usize {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<(i32, i32, char, String)>) -> usize {
     input
         .iter()
         .filter(|(lowest, highest, letter, password)| {

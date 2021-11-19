@@ -35,6 +35,7 @@ pub fn parse(input: &str) -> Data {
         .collect()
 }
 
+#[allow(clippy::ptr_arg)]
 pub fn part_1(input: &Data) -> usize {
     fn contains_bag(curr: &str, target: &str, data: &Data) -> bool {
         curr == target
@@ -52,6 +53,7 @@ pub fn part_1(input: &Data) -> usize {
         - 1
 }
 
+#[allow(clippy::ptr_arg)]
 pub fn part_1_cache(input: &Data) -> usize {
     fn contains_bag<'a>(curr: &'a str, data: &'a Data, cache: &mut HashMap<&'a str, bool>) -> bool {
         if !cache.contains_key(curr) {
@@ -72,12 +74,13 @@ pub fn part_1_cache(input: &Data) -> usize {
         - 1
 }
 
-pub fn part_2(input: &Data) -> u32 {
-    fn count_bags(container: &str, data: &Data) -> u32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Data) -> usize {
+    fn count_bags(container: &str, data: &Data) -> usize {
         data[container]
             .par_iter()
-            .map(|(qty, color)| *qty * count_bags(color, data))
-            .sum::<u32>()
+            .map(|(qty, color)| *qty as usize * count_bags(color, data))
+            .sum::<usize>()
             + 1
     }
 

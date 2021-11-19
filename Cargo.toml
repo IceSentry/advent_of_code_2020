@@ -7,9 +7,9 @@ edition = "2018"
 [workspace]
 
 [dependencies]
-itertools = "0.9.0"
+itertools = "0.10"
 indoc = "1.0.3"
 regex = "1.4.2"
 serde_scan = "0.4.1"
 rayon = "1.5.0"
-helper = { path = "helper" }
+aoc_helper = { git = "https://github.com/IceSentry/aoc_helper.git" }

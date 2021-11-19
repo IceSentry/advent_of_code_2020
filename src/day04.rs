@@ -52,12 +52,14 @@ pub fn parse(input: &str) -> Vec<HashMap<String, String>> {
         .filter(contains_keys)
         .collect()
 }
-//
-pub fn part_1(input: &[HashMap<String, String>]) -> usize {
-    input.iter().count()
+
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<HashMap<String, String>>) -> usize {
+    input.len()
 }
 
-pub fn part_2(input: &[HashMap<String, String>]) -> usize {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<HashMap<String, String>>) -> usize {
     input
         .iter()
         .filter(|p| p.iter().all(|(k, v)| validate_fields(k, v)))

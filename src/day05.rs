@@ -38,11 +38,13 @@ pub fn parse(input: &str) -> Vec<Seat> {
     vec
 }
 
-pub fn part_1(input: &[Seat]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_1(input: &Vec<Seat>) -> i32 {
     input.iter().max().unwrap().id
 }
 
-pub fn part_2(input: &[Seat]) -> i32 {
+#[allow(clippy::ptr_arg)]
+pub fn part_2(input: &Vec<Seat>) -> i32 {
     let mut it = input.iter().peekable();
     while let Some(seat) = it.next() {
         if it.peek().unwrap().id != seat.id + 1 {
